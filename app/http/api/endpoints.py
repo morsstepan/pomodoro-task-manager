@@ -3,6 +3,7 @@ from flask import Flask, json, g, request
 from app.projects.service import ProjectsService as Project
 from app.projects.schema import ProjectSchema
 from flask_cors import CORS
+from uuid import UUID
 
 app = Flask(__name__)
 CORS(app)
@@ -19,17 +20,17 @@ def index():
 def create():
     project_data = ProjectSchema().load(json.loads(request.data))
 
-    if project_data.errors:
-        return json_response({'error': project_data.errors}, 422)
+    # if project_data.errors:
+    #     return json_response({'error': project_data.errors}, 422)
 
     project = Project(g.user).create_project_with(project_data)
     return json_response(project)
 
 
-@app.route("/projects/<int:project_id>", methods=["GET"])
+@app.route("/projects/<string:project_id>", methods=["GET"])
 @login_required
 def show(project_id):
-    project = Project(g.user).find_project(project_id)
+    project = Project(g.user).find_project(UUID(project_id))
 
     if project:
         return json_response(project)
@@ -37,29 +38,29 @@ def show(project_id):
         return json_response({'error': 'project not found'}, 404)
 
 
-@app.route("/projects/<int:project_id>", methods=["PUT"])
+@app.route("/projects/<string:project_id>", methods=["PUT"])
 @login_required
 def update(project_id):
     project_data = ProjectSchema().load(json.loads(request.data))
 
-    if project_data.errors:
-        return json_response({'error': project_data.errors}, 422)
+    # if project_data.errors:
+    #     return json_response({'error': project_data.errors}, 422)
 
     project_service = Project(g.user)
-    if project_service.update_project_with(project_id, project_data):
-        return json_response(project_data.data)
+    if project_service.update_project_with(UUID(project_id), project_data):
+        return json_response(project_data)
     else:
         return json_response({'error': 'project not found'}, 404)
 
 
-@app.route("/projects/<int:project_id>", methods=["DELETE"])
+@app.route("/projects/<string:project_id>", methods=["DELETE"])
 @login_required
 def delete(project_id):
     project_service = Project(g.user)
-    if project_service.delete_project_for(project_id):
+    if project_service.delete_project_for(UUID(project_id)):
         return json_response({})
     else:
-        return json_response({'error': 'kudo not found'}, 404)
+        return json_response({'error': 'project not found'}, 404)
 
 
 def json_response(payload, status=200):

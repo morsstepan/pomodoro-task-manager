@@ -7,7 +7,7 @@ const client = axios.create({
 });
 
 export interface ServerProject {
-    id: number;
+    id: string;
     name: string;
     due_date: string;
 }
@@ -38,6 +38,11 @@ class APIClient {
         }).then(resp => {
             return resp.data ? resp.data : [];
         })
+    }
+
+    static async getFromService(authService: any): Promise<APIClient> {
+        const accessToken = await authService.getAccessToken();
+        return new APIClient(accessToken);
     }
 }
 

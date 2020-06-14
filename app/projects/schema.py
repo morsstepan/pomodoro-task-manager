@@ -2,7 +2,7 @@ from marshmallow import Schema, fields
 
 
 class ProjectSchema(Schema):
-    id = fields.Int(required=True)
+    id = fields.UUID(required=True)
     name = fields.Str()
     due_date = fields.DateTime('%Y-%m-%d')
 

@@ -7,10 +7,13 @@ import CardActions from "@material-ui/core/CardActions";
 import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
+import {ServerProject} from "../../apiClient";
 
 interface IProjectProps {
-    name: string;
-    dueDate: Date;
+    project: ServerProject;
+
+    // TODO Edit
+    onDelete(project: ServerProject): void;
 }
 
 const useStyles = makeStyles({
@@ -25,7 +28,7 @@ const useStyles = makeStyles({
     },
 });
 
-const Project: React.FC<IProjectProps> = ({ name, dueDate }) => {
+const Project: React.FC<IProjectProps> = ({ project, onDelete }) => {
     const classes = useStyles();
     return (
         <Card className={classes.root}>
@@ -34,16 +37,16 @@ const Project: React.FC<IProjectProps> = ({ name, dueDate }) => {
                     Project
                 </Typography>
                 <Typography variant="h5" component="h2">
-                    {name}
+                    {project.name}
                 </Typography>
                 <Typography className={classes.pos} color="textSecondary">
-                    Due by: {dueDate.toISOString()}
+                    Due by: {project.due_date}
                 </Typography>
             </CardContent>
             <CardActions>
                 <Button size="small">Open</Button>
                 <Button size="small"><EditIcon /></Button>
-                <Button size="small"><DeleteIcon /></Button>
+                <Button size="small" onClick={() => onDelete(project)}><DeleteIcon /></Button>
             </CardActions>
         </Card>
     );
