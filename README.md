@@ -15,3 +15,6 @@ Flask 😍 + React 🥰
     pipenv install
     docker-compose up
     pipenv run python -m flask run --port 4433
+    cd app/http/web && npm start
+    
+Сервер запускается на порте :4433, клиент на :8080, mongodb на :27017
