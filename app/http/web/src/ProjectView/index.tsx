@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import APIClient, { ServerProject, ServerTodo } from "../apiClient";
 import TodoForm from "../components/TodoForm";
 import TodoList from "../components/TodoList";
+import Title from './Title';
 
 interface IProjectViewProps {
   match: {
@@ -56,6 +57,20 @@ const ProjectView: React.FC<IProjectViewProps> = (props) => {
     [authService, requestProject]
   );
 
+  const deleteTodo = useCallback(async (todo: ServerTodo) => {
+    const client = await APIClient.getFromService(authService);
+    await client.deleteTodo(todo);
+    requestProject();
+  }, [authService, requestProject]);
+
+  const updateProject = useCallback(async (name: string) => {
+    const client = await APIClient.getFromService(authService);
+    if (project) {
+      await client.updateProject({ ...project, name });
+    }
+    requestProject();
+  }, [authService, requestProject, project]);
+
   useEffect(() => {
     requestProject();
   }, [requestProject]);
@@ -69,11 +84,11 @@ const ProjectView: React.FC<IProjectViewProps> = (props) => {
           </Link>
         </CardActions>
         <CardContent>
-          <Typography component="h2">{project?.name}</Typography>
+          <Title name={project?.name} onUpdate={(name) => updateProject(name)}/>
           <Typography color="textSecondary">
             Due by: {project?.due_date}
           </Typography>
-          {todos && <TodoList todos={todos} onCheckedChange={checkedChange} />}
+          {todos && <TodoList onDelete={deleteTodo} todos={todos} onCheckedChange={checkedChange} />}
           <TodoForm projectId={id} onCreateFinished={requestProject} />
         </CardContent>
       </Card>
