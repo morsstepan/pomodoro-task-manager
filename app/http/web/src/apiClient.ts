@@ -27,6 +27,10 @@ class APIClient {
         return this.perform('get', '/projects')
     }
 
+    getProject(id: string) {
+        return this.perform('get', '/projects/' + id)
+    }
+
     async perform(method: AxiosRequestConfig["method"], resource: string, data?: ServerProject) {
         return client({
             method,
