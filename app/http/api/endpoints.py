@@ -2,6 +2,8 @@ from .middlewares import login_required
 from flask import Flask, json, g, request
 from app.projects.service import ProjectsService as Project
 from app.projects.schema import ProjectSchema
+from app.todos.service import TodosService as Todo
+from app.todos.schema import TodoSchema
 from flask_cors import CORS
 from uuid import UUID
 
@@ -62,6 +64,19 @@ def delete(project_id):
     else:
         return json_response({'error': 'project not found'}, 404)
 
+
+@app.route("/projects/<string:project_id>/todos", methods=["GET"])
+@login_required
+def index_todos(project_id):
+    return json_response(Todo(g.user).find_project_todos(project_id))
+
+@app.route("/projects/<string:project_id>/todos", methods=["POST"])
+@login_required
+def create_todo(project_id):
+    todo_data = TodoSchema().load(json.loads(request.data))
+
+    todo = Todo(g.user).create_todo_with(todo_data, project_id)
+    return json_response(todo)
 
 def json_response(payload, status=200):
     return (json.dumps(payload), status, {'Content-Type': 'application/json'})

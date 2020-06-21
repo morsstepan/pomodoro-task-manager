@@ -26,3 +26,7 @@ class MongoRepository(object):
 class ProjectsMongoRepository(MongoRepository):
     def __init__(self):
         super(ProjectsMongoRepository, self).__init__('projects')
+
+class TodosMongoRepository(MongoRepository):
+    def __init__(self):
+        super(TodosMongoRepository, self).__init__('todos')
