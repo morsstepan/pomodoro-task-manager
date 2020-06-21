@@ -13,11 +13,11 @@ class TodosService(object):
 
     def find_all_todos(self):
         todos = self.repo_client.find_all({'user_id': self.user_id})
-        return [self.dump(todos) for todo in todos]
+        return [self.dump(todo) for todo in todos]
 
     def find_project_todos(self, project_id):
         todos = self.repo_client.find_all({'user_id': self.user_id, 'project_id': project_id})
-        return [self.dump(todos) for todo in todos]
+        return [self.dump(todo) for todo in todos]
 
     def find_todo(self, todo_id):
         todo = self.repo_client.find({'user_id': self.user_id, 'id': todo_id})
@@ -27,8 +27,8 @@ class TodosService(object):
         self.repo_client.create(self.prepare_todo(todo_data, project_id))
         return self.dump(todo_data)
 
-    def update_todo_with(self, todo_id, todo_data):
-        records_affected = self.repo_client.update({'user_id': self.user_id, 'id': todo_id}, self.prepare_todo(todo_data))
+    def update_todo_with(self, todo_id, todo_data, project_id):
+        records_affected = self.repo_client.update({'user_id': self.user_id, 'id': todo_id}, self.prepare_todo(todo_data, project_id))
         return records_affected > 0
 
     def delete_todo_for(self, todo_id):

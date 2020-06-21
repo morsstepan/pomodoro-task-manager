@@ -70,6 +70,7 @@ def delete(project_id):
 def index_todos(project_id):
     return json_response(Todo(g.user).find_project_todos(project_id))
 
+
 @app.route("/projects/<string:project_id>/todos", methods=["POST"])
 @login_required
 def create_todo(project_id):
@@ -77,6 +78,29 @@ def create_todo(project_id):
 
     todo = Todo(g.user).create_todo_with(todo_data, project_id)
     return json_response(todo)
+
+
+@app.route("/projects/<string:project_id>/todos/<string:todo_id>", methods=["PUT"])
+@login_required
+def update_todo(project_id, todo_id):
+    todo_data = TodoSchema().load(json.loads(request.data))
+
+    todo_service = Todo(g.user)
+    if todo_service.update_todo_with(UUID(todo_id), todo_data, project_id):
+        return json_response(todo_data)
+    else:
+        return json_response({'error': 'todo not found'}, 404)
+
+
+@app.route("/projects/<string:project_id>/todos/<string:todo_id>", methods=["DELETE"])
+@login_required
+def delete_todo(project_id, todo_id):
+    todo_service = Todo(g.user)
+    if todo_service.delete_todo_for(UUID(todo_id)):
+        return json_response({})
+    else:
+        return json_response({'error': 'todo not found'}, 404)
+
 
 def json_response(payload, status=200):
     return (json.dumps(payload), status, {'Content-Type': 'application/json'})
