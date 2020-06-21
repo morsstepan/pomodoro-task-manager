@@ -27,6 +27,10 @@ class APIClient {
     return this.perform("post", "/projects", project);
   }
 
+  updateProject(project: ServerProject) {
+    return this.perform("put", `/projects/${project.id}`, project);
+  }
+
   deleteProject(project: ServerProject) {
     return this.perform("delete", `/projects/${project.id}`);
   }
@@ -45,6 +49,10 @@ class APIClient {
 
   createTodo(todo: ServerTodo) {
     return this.perform("post", `/projects/${todo.project_id}/todos`, todo);
+  }
+
+  deleteTodo(todo: ServerTodo) {
+    return this.perform('delete', `/projects/${todo.project_id}/todos/${todo.id}`);
   }
 
   updateTodo(todo: ServerTodo) {

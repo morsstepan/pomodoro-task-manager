@@ -1,10 +1,12 @@
 import { Checkbox, makeStyles, Typography } from "@material-ui/core";
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import React from "react";
 import { ServerTodo } from "../../apiClient";
 
 interface TodoProps {
   todo: ServerTodo;
   onCheckedChange(): void;
+  onDelete(): void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -21,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Todo: React.FC<TodoProps> = ({ todo, onCheckedChange }) => {
+const Todo: React.FC<TodoProps> = ({ todo, onCheckedChange, onDelete }) => {
   const classes = useStyles();
   const className = `${classes.root} ${todo.checked ? classes.done : ""}`;
   return (
@@ -29,6 +31,7 @@ const Todo: React.FC<TodoProps> = ({ todo, onCheckedChange }) => {
       <Checkbox checked={todo.checked} onChange={onCheckedChange} />
       <Typography>{todo.name}</Typography>
       <Typography color="textSecondary">{todo.due_date}</Typography>
+      <HighlightOffIcon color="error" onClick={() => onDelete()}/>
     </div>
   );
 };
