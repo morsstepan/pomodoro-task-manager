@@ -47,6 +47,14 @@ class APIClient {
     return this.perform("post", `/projects/${todo.project_id}/todos`, todo);
   }
 
+  updateTodo(todo: ServerTodo) {
+    return this.perform(
+      "put",
+      `/projects/${todo.project_id}/todos/${todo.id}`,
+      todo
+    );
+  }
+
   async perform(
     method: AxiosRequestConfig["method"],
     resource: string,

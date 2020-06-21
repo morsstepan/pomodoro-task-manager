@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useCallback } from "react";
-import APIClient, { ServerProject, ServerTodo } from "../apiClient";
-import { useOktaAuth } from "@okta/okta-react";
 import {
-  Card,
-  CardContent,
-  Typography,
   Button,
+  Card,
   CardActions,
+  CardContent,
   makeStyles,
+  Typography,
 } from "@material-ui/core";
+import { useOktaAuth } from "@okta/okta-react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import TodoList from "../components/TodoList";
+import APIClient, { ServerProject, ServerTodo } from "../apiClient";
 import TodoForm from "../components/TodoForm";
+import TodoList from "../components/TodoList";
 
 interface IProjectViewProps {
   match: {
@@ -46,6 +46,16 @@ const ProjectView: React.FC<IProjectViewProps> = (props) => {
     setTodos(todos);
   }, [id, authService, setProject, setTodos]);
 
+  const checkedChange = useCallback(
+    async (todo: ServerTodo) => {
+      const newTodo = { ...todo, checked: !todo.checked };
+      const client = await APIClient.getFromService(authService);
+      await client.updateTodo(newTodo);
+      requestProject();
+    },
+    [authService, requestProject]
+  );
+
   useEffect(() => {
     requestProject();
   }, [requestProject]);
@@ -63,7 +73,7 @@ const ProjectView: React.FC<IProjectViewProps> = (props) => {
           <Typography color="textSecondary">
             Due by: {project?.due_date}
           </Typography>
-          {todos && <TodoList todos={todos} />}
+          {todos && <TodoList todos={todos} onCheckedChange={checkedChange} />}
           <TodoForm projectId={id} onCreateFinished={requestProject} />
         </CardContent>
       </Card>
