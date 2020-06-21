@@ -1,34 +1,50 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import APIClient, { ServerProject } from '../apiClient';
-import { useOktaAuth } from '@okta/okta-react';
-import { Card, CardContent, Typography, Button, CardActions, makeStyles } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from "react";
+import APIClient, { ServerProject, ServerTodo } from "../apiClient";
+import { useOktaAuth } from "@okta/okta-react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  CardActions,
+  makeStyles,
+} from "@material-ui/core";
+import { Link } from "react-router-dom";
+import TodoList from "../components/TodoList";
+import TodoForm from "../components/TodoForm";
 
 interface IProjectViewProps {
   match: {
     params: {
-      id: string
-    }
+      id: string;
+    };
   };
 }
 
 const useStyles = makeStyles({
   link: {
-    textDecoration: 'none',
+    textDecoration: "none",
   },
 });
 
 const ProjectView: React.FC<IProjectViewProps> = (props) => {
-  const { match: { params: { id } } } = props;
+  const {
+    match: {
+      params: { id },
+    },
+  } = props;
   const { authService } = useOktaAuth();
   const classes = useStyles();
   const [project, setProject] = useState<ServerProject>();
+  const [todos, setTodos] = useState<ServerTodo[]>();
 
   const requestProject = useCallback(async () => {
     const client = await APIClient.getFromService(authService);
     const project = await client.getProject(id);
     setProject(project);
-  }, [id, authService, setProject]);
+    const todos = await client.getTodos(id);
+    setTodos(todos);
+  }, [id, authService, setProject, setTodos]);
 
   useEffect(() => {
     requestProject();
@@ -38,23 +54,23 @@ const ProjectView: React.FC<IProjectViewProps> = (props) => {
     return (
       <Card>
         <CardActions>
-          <Link to={'/home'} className={classes.link}>
+          <Link to={"/home"} className={classes.link}>
             <Button size="small">Back</Button>
           </Link>
         </CardActions>
         <CardContent>
-          <Typography component="h2">
-            {project?.name}
-          </Typography>
+          <Typography component="h2">{project?.name}</Typography>
           <Typography color="textSecondary">
-              Due by: {project?.due_date}
+            Due by: {project?.due_date}
           </Typography>
+          {todos && <TodoList todos={todos} />}
+          <TodoForm projectId={id} onCreateFinished={requestProject} />
         </CardContent>
       </Card>
     );
   }
 
   return null;
-}
+};
 
 export default ProjectView;
