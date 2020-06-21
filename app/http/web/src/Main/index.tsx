@@ -4,6 +4,7 @@ import { Security, LoginCallback, SecureRoute } from '@okta/okta-react';
 
 import Login from '../Login';
 import Home from '../Home';
+import ProjectView from '../ProjectView';
 
 const Main: React.FC = () => (
     <Router>
@@ -16,6 +17,7 @@ const Main: React.FC = () => (
                 <Route exact path="/" component={Login} />
                 <Route path="/implicit/callback" component={LoginCallback} />
                 <SecureRoute path="/home" component={Home} />
+                <SecureRoute path="/projects/:id" component={ProjectView} />
             </Switch>
         </Security>
     </Router>
