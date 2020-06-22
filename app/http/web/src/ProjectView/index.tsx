@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import APIClient, { ServerProject, ServerTodo } from "../apiClient";
 import TodoForm from "../components/TodoForm";
 import TodoList from "../components/TodoList";
+import { Pomodoro } from "../components/Pomodoro";
 import Title from './Title';
 
 interface IProjectViewProps {
@@ -77,21 +78,28 @@ const ProjectView: React.FC<IProjectViewProps> = (props) => {
 
   if (project) {
     return (
-      <Card>
-        <CardActions>
-          <Link to={"/home"} className={classes.link}>
-            <Button size="small">Back</Button>
-          </Link>
-        </CardActions>
-        <CardContent>
-          <Title name={project?.name} onUpdate={(name) => updateProject(name)}/>
-          <Typography color="textSecondary">
-            Due by: {project?.due_date}
-          </Typography>
-          {todos && <TodoList onDelete={deleteTodo} todos={todos} onCheckedChange={checkedChange} />}
-          <TodoForm projectId={id} onCreateFinished={requestProject} />
-        </CardContent>
-      </Card>
+        <Card>
+            <CardActions>
+                <Link to={"/home"} className={classes.link}>
+                    <Button size="small">Back</Button>
+                </Link>
+            </CardActions>
+            <CardContent>
+                <div style={{display: "flex", justifyContent: "space-around"}}>
+                    <div>
+                        <Title name={project?.name} onUpdate={(name) => updateProject(name)}/>
+                        <Typography color="textSecondary">
+                            Due by: {project?.due_date}
+                        </Typography>
+                        {todos && <TodoList onDelete={deleteTodo} todos={todos} onCheckedChange={checkedChange} />}
+                        <TodoForm projectId={id} onCreateFinished={requestProject} />
+                    </div>
+                    <div>
+                        <Pomodoro defaultPomodoro={1500} />
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
     );
   }
 
